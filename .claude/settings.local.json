@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /mnt/c/Users/OGS/Desktop/HB/taskflow-api -type f | head -80)",
+      "PowerShell(Get-ChildItem -Recurse \"C:\\\\Users\\\\OGS\\\\Desktop\\\\HB\\\\taskflow-api\" | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName | head)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\OGS\\\\Desktop\\\\HB\\\\taskflow-api\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(ConvertTo-Csv -NoTypeInformation)",
+      "Bash(Format-Table)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\OGS\\\\Desktop\\\\HB\\\\taskflow-api\\\\src\\\\test\" -Recurse -File)",
+      "Bash(mvn test *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\OGS\\\\Desktop\\\\HB\\\\taskflow-api\\\\src\\\\main\\\\java\" -Recurse -Filter \"*.java\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\OGS\\\\Desktop\\\\HB\\\\taskflow-api\\\\src\\\\main\\\\java\" -Recurse -Directory)"
+    ]
+  }
+}

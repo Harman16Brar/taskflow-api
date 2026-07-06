@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>Overdue Tasks Summary</h2>
+<p>The following tasks are overdue:</p>
+<ul>
+    <li th:each="task : ${tasks}">
+        <strong th:text="${task.name}">Task</strong>
+        — due <span th:text="${task.dueDate}">date</span>
+    </li>
+</ul>
+</body>
+</html>

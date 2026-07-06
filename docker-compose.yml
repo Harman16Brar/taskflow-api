@@ -1,0 +1,74 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: taskflow-postgres
+    environment:
+      POSTGRES_DB: taskflow
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - taskflow-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: taskflow-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - taskflow-network
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: taskflow-mailhog
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    networks:
+      - taskflow-network
+
+  app:
+    build: .
+    container_name: taskflow-app
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+      - mailhog
+    networks:
+      - taskflow-network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: taskflow-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - taskflow-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: taskflow-grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - taskflow-network
+
+volumes:
+  postgres_data:
+
+networks:
+  taskflow-network:
+    driver: bridge

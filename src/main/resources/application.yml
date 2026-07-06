@@ -1,0 +1,85 @@
+spring:
+  application:
+    name: taskflow-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taskflow
+    username: postgres
+    password: Quark@2020
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  cache:
+    type: redis
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    #secret: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7e7d0d9a8d0a1b2c3d4e5f6a7
+    expiration: 900000       # 15 minutes (was 86400000 = 24 hours)
+    refresh-expiration-days: 7  # 7 days
+
+  mail:
+    from: "noreply@taskflow.com"
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+management:
+  metrics:
+    tags:
+      application: taskflow-api
+
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+  endpoint:
+    health:
+      show-details: always
+
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: TaskFlow API
+    version: 1.0.0
+    description: Task Management API
