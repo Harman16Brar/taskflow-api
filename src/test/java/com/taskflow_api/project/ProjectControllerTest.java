@@ -29,6 +29,13 @@ class ProjectControllerTest extends BaseIntegrationTest {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
+    @Autowired
+    private com.taskflow_api.task.TaskRepository taskRepository;
+    @Autowired
+    private com.taskflow_api.activity.ActivityLogRepository activityLogRepository;
+    @Autowired
+    private com.taskflow_api.comment.CommentRepository commentRepository;
+
     private String token;
     private String workspaceId;
     private String projectId;
@@ -40,6 +47,10 @@ class ProjectControllerTest extends BaseIntegrationTest {
         workspaceMemberRepository.deleteAll();
         workspaceRepository.deleteAll();
         userRepository.deleteAll();
+        activityLogRepository.deleteAll();
+        commentRepository.deleteAll();
+        taskRepository.deleteAllHard();
+
 
         String email = uniqueEmail("project");
         token = registerAndGetToken(email, "Harman");

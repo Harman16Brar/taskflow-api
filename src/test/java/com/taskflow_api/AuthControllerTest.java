@@ -27,10 +27,22 @@ public class AuthControllerTest extends BaseIntegrationTest {
     private WorkspaceMemberRepository workspaceMemberRepository;
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    private com.taskflow_api.project.ProjectRepository projectRepository;
+    @Autowired
+    private com.taskflow_api.task.TaskRepository taskRepository;
+    @Autowired
+    private com.taskflow_api.activity.ActivityLogRepository activityLogRepository;
+    @Autowired
+    private com.taskflow_api.comment.CommentRepository commentRepository;
 
     @BeforeEach
     void setUp() {
         refreshTokenRepository.deleteAll();
+        activityLogRepository.deleteAll();
+        commentRepository.deleteAll();
+        taskRepository.deleteAllHard();
+        projectRepository.deleteAllHard();
         workspaceMemberRepository.deleteAll();
         workspaceRepository.deleteAll();
         userRepository.deleteAll();

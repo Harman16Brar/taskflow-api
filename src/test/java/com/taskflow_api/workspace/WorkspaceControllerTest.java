@@ -1,8 +1,12 @@
 package com.taskflow_api.workspace;
 
 import com.jayway.jsonpath.JsonPath;
+import com.taskflow_api.activity.ActivityLogRepository;
 import com.taskflow_api.auth.RefreshTokenRepository;
+import com.taskflow_api.comment.CommentRepository;
+import com.taskflow_api.project.ProjectRepository;
 import com.taskflow_api.shared.BaseIntegrationTest;
+import com.taskflow_api.task.TaskRepository;
 import com.taskflow_api.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,15 +29,31 @@ class WorkspaceControllerTest extends BaseIntegrationTest {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private ActivityLogRepository activityLogRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
+
     private String token;
     private String workspaceId;
 
     @BeforeEach
     void setUp() throws Exception {
         refreshTokenRepository.deleteAll();
+        projectRepository.deleteAllHard(); // bypasses @SQLRestriction
         workspaceMemberRepository.deleteAll();
         workspaceRepository.deleteAll();
         userRepository.deleteAll();
+        activityLogRepository.deleteAll();
+        commentRepository.deleteAll();
+        taskRepository.deleteAllHard();
 
         String email = uniqueEmail("workspace");
         token = registerAndGetToken(email, "Harman");
