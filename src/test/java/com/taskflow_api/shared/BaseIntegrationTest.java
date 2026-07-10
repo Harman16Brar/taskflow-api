@@ -21,7 +21,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Testcontainers
 public class BaseIntegrationTest {
     @Autowired
     protected MockMvc mockMvc;
@@ -43,6 +42,10 @@ public class BaseIntegrationTest {
             .withPassword("test")
             .withEnv("TZ", "UTC")
             .withEnv("PGTZ", "UTC");
+
+    static {
+        postgres.start();  // starts once for entire test run
+    }
 
     protected String registerAndGetToken(String email, String firstName) throws Exception {
         String body = """
