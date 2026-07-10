@@ -72,5 +72,9 @@ public class BaseIntegrationTest {
         registry.add("spring.datasource.hikari.connection-init-sql", () -> "SET TIME ZONE 'UTC'");
         registry.add("spring.flyway.init-sqls", () -> "SET TIME ZONE 'UTC'");
         registry.add("scheduling.enabled", () -> "false");
+        registry.add("rate.limit.enabled", () -> "false");
+        registry.add("spring.datasource.hikari.maximum-pool-size", () -> "5");
+        registry.add("spring.datasource.hikari.max-lifetime", () -> "30000");
+        registry.add("spring.datasource.hikari.keepalive-time", () -> "20000");
     }
 }

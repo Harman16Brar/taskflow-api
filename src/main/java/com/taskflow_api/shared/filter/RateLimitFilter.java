@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,6 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Order(1)
 @Slf4j
 public class RateLimitFilter extends OncePerRequestFilter {
+
+    @Value("${rate.limit.enabled:true}")
+    private boolean rateLimitEnabled;
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
@@ -46,6 +50,11 @@ public class RateLimitFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        if (!rateLimitEnabled) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String key = resolveKey(request);
         boolean isAuthenticated = request.getHeader("Authorization") != null;
 
