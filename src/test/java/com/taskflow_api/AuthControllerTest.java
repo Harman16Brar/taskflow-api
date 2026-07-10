@@ -1,5 +1,6 @@
 package com.taskflow_api;
 
+import com.taskflow_api.auth.RefreshTokenRepository;
 import com.taskflow_api.shared.BaseIntegrationTest;
 import com.taskflow_api.user.UserRepository;
 import com.taskflow_api.workspace.WorkspaceMember;
@@ -24,9 +25,12 @@ public class AuthControllerTest extends BaseIntegrationTest {
 
     @Autowired
     private WorkspaceMemberRepository workspaceMemberRepository;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     @BeforeEach
     void setUp() {
+        refreshTokenRepository.deleteAll();
         workspaceMemberRepository.deleteAll();
         workspaceRepository.deleteAll();
         userRepository.deleteAll();

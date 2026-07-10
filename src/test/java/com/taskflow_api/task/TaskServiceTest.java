@@ -34,10 +34,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
-    @Mock private TaskRepository taskRepository;
-    @Mock private ProjectRepository projectRepository;
-    @Mock private WorkspaceMemberRepository workspaceMemberRepository;
-    @Mock private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private TaskRepository taskRepository;
+    @Mock
+    private ProjectRepository projectRepository;
+    @Mock
+    private WorkspaceMemberRepository workspaceMemberRepository;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private TaskService taskService;
@@ -85,7 +89,7 @@ class TaskServiceTest {
 
     @Test
     void create_whenValid_shouldSaveTaskAndPublishEvent() {
-        Task saved = Task.create("My Task", "desc", projectId, null, UUID.randomUUID());
+        Task saved = Task.create("My Task", "desc", projectId, null, UUID.randomUUID(), TaskPriority.HIGH);
 
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
         when(workspaceMemberRepository.existsByWorkspaceIdAndUserId(any(), any())).thenReturn(true);
@@ -119,7 +123,7 @@ class TaskServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void fetchAllTasks_whenValid_shouldReturnPage() {
-        Task task = Task.create("Task 1", "desc", projectId, null, UUID.randomUUID());
+        Task task = Task.create("Task 1", "desc", projectId, null, UUID.randomUUID(), TaskPriority.HIGH);
         Page<Task> page = new PageImpl<>(List.of(task));
 
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
@@ -159,7 +163,7 @@ class TaskServiceTest {
 
     @Test
     void fetchTaskById_whenValid_shouldReturnTaskResponse() {
-        Task task = Task.create("My Task", "desc", projectId, null, UUID.randomUUID());
+        Task task = Task.create("My Task", "desc", projectId, null, UUID.randomUUID(), TaskPriority.HIGH);
 
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
         when(workspaceMemberRepository.existsByWorkspaceIdAndUserId(any(), any())).thenReturn(true);
@@ -186,7 +190,7 @@ class TaskServiceTest {
 
     @Test
     void updateTask_whenValid_shouldSaveAndPublishEvent() {
-        Task task = Task.create("Old Name", "desc", projectId, null, UUID.randomUUID());
+        Task task = Task.create("Old Name", "desc", projectId, null, UUID.randomUUID(), TaskPriority.HIGH);
         UpdateTaskRequest req = new UpdateTaskRequest();
         ReflectionTestUtils.setField(req, "name", "New Name");
 
@@ -235,7 +239,7 @@ class TaskServiceTest {
         WorkspaceMember member = new WorkspaceMember();
         member.setRole(WorkspaceRole.OWNER);
 
-        Task task = Task.create("Task", "desc", projectId, null, UUID.randomUUID());
+        Task task = Task.create("Task", "desc", projectId, null, UUID.randomUUID(), TaskPriority.HIGH);
 
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
         when(workspaceMemberRepository.findByWorkspaceIdAndUserId(any(), any())).thenReturn(Optional.of(member));
@@ -243,7 +247,8 @@ class TaskServiceTest {
 
         taskService.deleteTask(projectId, taskId, currentUser);
 
-        verify(taskRepository, times(1)).deleteById(any());
+      //  verify(taskRepository, times(1)).deleteById(any());
+        verify(taskRepository, times(1)).save(any()); // ✅ soft delete
         verify(eventPublisher, times(1)).publishEvent(any());
     }
 }

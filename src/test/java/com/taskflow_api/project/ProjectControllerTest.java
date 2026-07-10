@@ -1,6 +1,7 @@
 package com.taskflow_api.project;
 
 import com.jayway.jsonpath.JsonPath;
+import com.taskflow_api.auth.RefreshTokenRepository;
 import com.taskflow_api.shared.BaseIntegrationTest;
 import com.taskflow_api.user.UserRepository;
 import com.taskflow_api.workspace.WorkspaceMemberRepository;
@@ -25,6 +26,8 @@ class ProjectControllerTest extends BaseIntegrationTest {
     private WorkspaceRepository workspaceRepository;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     private String token;
     private String workspaceId;
@@ -32,6 +35,7 @@ class ProjectControllerTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        refreshTokenRepository.deleteAll();
         projectRepository.deleteAllHard(); // bypasses @SQLRestriction
         workspaceMemberRepository.deleteAll();
         workspaceRepository.deleteAll();

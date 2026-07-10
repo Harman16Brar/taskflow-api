@@ -56,7 +56,8 @@ public class TaskService {
                 request.getDescription(),
                 projectId,
                 request.getAssigneeId(),
-                currentUser.getId());
+                currentUser.getId(),
+                request.getPriority());
 
         Task savedTask = taskRepository.save(task);
 

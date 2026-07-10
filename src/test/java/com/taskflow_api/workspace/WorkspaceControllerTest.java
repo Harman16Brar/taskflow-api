@@ -1,6 +1,7 @@
 package com.taskflow_api.workspace;
 
 import com.jayway.jsonpath.JsonPath;
+import com.taskflow_api.auth.RefreshTokenRepository;
 import com.taskflow_api.shared.BaseIntegrationTest;
 import com.taskflow_api.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,15 +16,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class WorkspaceControllerTest extends BaseIntegrationTest {
 
-    @Autowired private UserRepository userRepository;
-    @Autowired private WorkspaceMemberRepository workspaceMemberRepository;
-    @Autowired private WorkspaceRepository workspaceRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private WorkspaceMemberRepository workspaceMemberRepository;
+    @Autowired
+    private WorkspaceRepository workspaceRepository;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     private String token;
     private String workspaceId;
 
     @BeforeEach
     void setUp() throws Exception {
+        refreshTokenRepository.deleteAll();
         workspaceMemberRepository.deleteAll();
         workspaceRepository.deleteAll();
         userRepository.deleteAll();

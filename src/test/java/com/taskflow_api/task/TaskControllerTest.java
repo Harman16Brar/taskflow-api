@@ -2,6 +2,7 @@ package com.taskflow_api.task;
 
 import com.jayway.jsonpath.JsonPath;
 import com.taskflow_api.activity.ActivityLogRepository;
+import com.taskflow_api.auth.RefreshTokenRepository;
 import com.taskflow_api.comment.CommentRepository;
 import com.taskflow_api.project.ProjectRepository;
 import com.taskflow_api.shared.BaseIntegrationTest;
@@ -34,6 +35,8 @@ class TaskControllerTest extends BaseIntegrationTest {
     private CommentRepository commentRepository;
     @Autowired
     private ActivityLogRepository activityLogRepository;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     private String token;
     private String projectId;
@@ -41,9 +44,10 @@ class TaskControllerTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        refreshTokenRepository.deleteAll();
         activityLogRepository.deleteAll();
         commentRepository.deleteAll();
-        taskRepository.deleteAll();
+        taskRepository.deleteAllHard();
         projectRepository.deleteAllHard();
         workspaceMemberRepository.deleteAll();
         workspaceRepository.deleteAll();

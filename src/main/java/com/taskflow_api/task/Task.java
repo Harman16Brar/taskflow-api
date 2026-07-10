@@ -41,12 +41,13 @@ public class Task extends BaseEntity {
     private LocalDateTime dueDate;
 
 
-    public static Task create(String name, String description, UUID projectId, UUID assigneeId, UUID createdBy) {
+    public static Task create(String name, String description, UUID projectId, UUID assigneeId, UUID createdBy, TaskPriority priority) {
         Task task = new Task();
         task.setName(name);
         task.setDescription(description);
         task.setProjectId(projectId);
         task.setAssigneeId(assigneeId);
+        task.setPriority(priority);
         task.setCreatedBy(createdBy);
 
         return task;

@@ -5,6 +5,7 @@ import com.taskflow_api.project.Project;
 import com.taskflow_api.project.ProjectRepository;
 import com.taskflow_api.shared.exception.ResourceNotFoundException;
 import com.taskflow_api.task.Task;
+import com.taskflow_api.task.TaskPriority;
 import com.taskflow_api.task.TaskRepository;
 import com.taskflow_api.user.User;
 import com.taskflow_api.workspace.WorkspaceMemberRepository;
@@ -47,7 +48,7 @@ class ActivityLogServiceTest {
         projectId = UUID.randomUUID();
         workspaceId = UUID.randomUUID();
         currentUser = new User();
-        task = Task.create("Task", "desc", projectId, null, UUID.randomUUID());
+        task = Task.create("Task", "desc", projectId, null, UUID.randomUUID(), TaskPriority.HIGH);
         project = Project.create("Project", "desc", workspaceId, UUID.randomUUID());
     }
 

@@ -21,17 +21,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TaskRepositoryTest extends BaseRepositoryTest {
 
-    @Autowired private TaskRepository taskRepository;
-    @Autowired private ProjectRepository projectRepository;
-    @Autowired private WorkspaceRepository workspaceRepository;
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private TaskRepository taskRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
+    @Autowired
+    private WorkspaceRepository workspaceRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     private UUID projectId;
     private UUID userId;
 
     @BeforeEach
     void setUp() {
-        taskRepository.deleteAll();
+        taskRepository.deleteAllHard();
         projectRepository.deleteAll();
         workspaceRepository.deleteAll();
         userRepository.deleteAll();
@@ -56,9 +60,9 @@ class TaskRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void findAllByProjectId_shouldReturnPagedResults() {
-        taskRepository.save(Task.create("Task 1", "desc", projectId, null, userId));
-        taskRepository.save(Task.create("Task 2", "desc", projectId, null, userId));
-        taskRepository.save(Task.create("Task 3", "desc", projectId, null, userId));
+        taskRepository.save(Task.create("Task 1", "desc", projectId, null, userId, TaskPriority.HIGH));
+        taskRepository.save(Task.create("Task 2", "desc", projectId, null, userId, TaskPriority.HIGH));
+        taskRepository.save(Task.create("Task 3", "desc", projectId, null, userId, TaskPriority.HIGH));
 
         Page<Task> page = taskRepository.findAllByProjectId(projectId, PageRequest.of(0, 2));
 
@@ -77,7 +81,7 @@ class TaskRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void findByProjectIdAndId_shouldReturnTask_whenFound() {
-        Task saved = taskRepository.save(Task.create("My Task", "desc", projectId, null, userId));
+        Task saved = taskRepository.save(Task.create("My Task", "desc", projectId, null, userId, TaskPriority.HIGH));
         Optional<Task> result = taskRepository.findByProjectIdAndId(projectId, saved.getId());
         assertTrue(result.isPresent());
         assertEquals("My Task", result.get().getName());
@@ -91,7 +95,7 @@ class TaskRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void findByProjectIdAndId_shouldReturnEmpty_whenProjectIdMismatch() {
-        Task saved = taskRepository.save(Task.create("My Task", "desc", projectId, null, userId));
+        Task saved = taskRepository.save(Task.create("My Task", "desc", projectId, null, userId, TaskPriority.HIGH));
         Optional<Task> result = taskRepository.findByProjectIdAndId(UUID.randomUUID(), saved.getId());
         assertTrue(result.isEmpty());
     }
@@ -100,8 +104,8 @@ class TaskRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void findAll_shouldExcludeSoftDeletedTasks() {
-        Task active = taskRepository.save(Task.create("Active", "desc", projectId, null, userId));
-        Task deleted = taskRepository.save(Task.create("Deleted", "desc", projectId, null, userId));
+        Task active = taskRepository.save(Task.create("Active", "desc", projectId, null, userId, TaskPriority.HIGH));
+        Task deleted = taskRepository.save(Task.create("Deleted", "desc", projectId, null, userId, TaskPriority.HIGH));
         deleted.setDeleted(true);
         taskRepository.save(deleted);
 
@@ -115,8 +119,8 @@ class TaskRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void specification_hasStatus_shouldFilterByStatus() {
-        taskRepository.save(Task.create("Todo Task", "desc", projectId, null, userId));
-        Task inProgress = Task.create("InProgress Task", "desc", projectId, null, userId);
+        taskRepository.save(Task.create("Todo Task", "desc", projectId, null, userId, TaskPriority.HIGH));
+        Task inProgress = Task.create("InProgress Task", "desc", projectId, null, userId, TaskPriority.HIGH);
         inProgress.setStatus(TaskStatus.IN_PROGRESS);
         taskRepository.save(inProgress);
 
@@ -131,10 +135,10 @@ class TaskRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void specification_hasPriority_shouldFilterByPriority() {
-        Task low = Task.create("Low Task", "desc", projectId, null, userId);
+        Task low = Task.create("Low Task", "desc", projectId, null, userId, TaskPriority.HIGH);
         low.setPriority(TaskPriority.LOW);
         taskRepository.save(low);
-        taskRepository.save(Task.create("Medium Task", "desc", projectId, null, userId));
+        taskRepository.save(Task.create("Medium Task", "desc", projectId, null, userId, TaskPriority.HIGH));
 
         Specification<Task> spec = TaskSpecification.hasProjectId(projectId)
                 .and(TaskSpecification.hasPriority(TaskPriority.LOW));
@@ -147,12 +151,12 @@ class TaskRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void specification_hasAssigneeId_shouldFilterByAssignee() {
-        UUID assignee = UUID.randomUUID();
-        taskRepository.save(Task.create("Assigned Task", "desc", projectId, assignee, userId));
-        taskRepository.save(Task.create("Unassigned Task", "desc", projectId, null, userId));
+        // UUID assignee = UUID.randomUUID();
+        taskRepository.save(Task.create("Assigned Task", "desc", projectId, userId, userId, TaskPriority.HIGH));
+        taskRepository.save(Task.create("Unassigned Task", "desc", projectId, null, userId, TaskPriority.HIGH));
 
         Specification<Task> spec = TaskSpecification.hasProjectId(projectId)
-                .and(TaskSpecification.hasAssigneeId(assignee));
+                .and(TaskSpecification.hasAssigneeId(userId));
 
         Page<Task> result = taskRepository.findAll(spec, PageRequest.of(0, 10));
 

@@ -5,11 +5,13 @@ import com.taskflow_api.auth.dto.LoginRequest;
 import com.taskflow_api.auth.dto.RegisterRequest;
 import com.taskflow_api.auth.service.AuthService;
 import com.taskflow_api.auth.service.JwtService;
+import com.taskflow_api.shared.email.EmailService;
 import com.taskflow_api.shared.exception.DuplicateResourceException;
 import com.taskflow_api.shared.exception.InvalidCredentialsException;
 import com.taskflow_api.user.User;
 import com.taskflow_api.user.UserRepository;
 import com.taskflow_api.workspace.WorkspaceService;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,10 +30,20 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
-    @Mock private UserRepository userRepository;
-    @Mock private JwtService jwtService;
-    @Mock private PasswordEncoder passwordEncoder;
-    @Mock private WorkspaceService workspaceService;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private JwtService jwtService;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private WorkspaceService workspaceService;
+    @Mock
+    private EmailService emailService;
+    @Mock
+    private MeterRegistry meterRegistry;
+    @Mock
+    private RefreshTokenService refreshTokenService;
 
     @InjectMocks
     private AuthService authService;
@@ -74,6 +86,9 @@ class AuthServiceTest {
         when(passwordEncoder.encode(anyString())).thenReturn("hashed");
         when(userRepository.save(any())).thenReturn(saved);
         when(jwtService.generateToken(any())).thenReturn("jwt-token");
+        when(refreshTokenService.createRefreshToken(any())).thenReturn("raw-refresh-token");
+        when(meterRegistry.counter(anyString())).thenReturn(mock(io.micrometer.core.instrument.Counter.class));
+
 
         AuthResponse response = authService.register(request);
 
@@ -92,6 +107,7 @@ class AuthServiceTest {
         when(passwordEncoder.encode("plaintext")).thenReturn("hashed");
         when(userRepository.save(any())).thenReturn(saved);
         when(jwtService.generateToken(any())).thenReturn("token");
+        when(meterRegistry.counter(anyString())).thenReturn(mock(io.micrometer.core.instrument.Counter.class));
 
         authService.register(request);
 

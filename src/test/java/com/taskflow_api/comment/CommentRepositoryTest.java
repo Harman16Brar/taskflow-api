@@ -4,6 +4,7 @@ import com.taskflow_api.project.Project;
 import com.taskflow_api.project.ProjectRepository;
 import com.taskflow_api.shared.BaseRepositoryTest;
 import com.taskflow_api.task.Task;
+import com.taskflow_api.task.TaskPriority;
 import com.taskflow_api.task.TaskRepository;
 import com.taskflow_api.user.User;
 import com.taskflow_api.user.UserRepository;
@@ -51,7 +52,7 @@ class CommentRepositoryTest extends BaseRepositoryTest {
         Project project = Project.create("Project", "desc", workspace.getId(), userId);
         project = projectRepository.save(project);
 
-        Task task = Task.create("Test Task", "desc", project.getId(), null, userId);
+        Task task = Task.create("Test Task", "desc", project.getId(), null, userId, TaskPriority.HIGH);
         task = taskRepository.save(task);
         taskId = task.getId();
     }
