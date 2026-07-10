@@ -42,7 +42,7 @@ public class AuthControllerTest extends BaseIntegrationTest {
         activityLogRepository.deleteAll();
         commentRepository.deleteAll();
         taskRepository.deleteAllHard();
-        projectRepository.deleteAllHard();
+        projectRepository.deleteAllHard();  // bypasses @SQLRestriction
         workspaceMemberRepository.deleteAll();
         workspaceRepository.deleteAll();
         userRepository.deleteAll();

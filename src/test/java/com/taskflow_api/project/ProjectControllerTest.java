@@ -43,13 +43,13 @@ class ProjectControllerTest extends BaseIntegrationTest {
     @BeforeEach
     void setUp() throws Exception {
         refreshTokenRepository.deleteAll();
-        projectRepository.deleteAllHard(); // bypasses @SQLRestriction
-        workspaceMemberRepository.deleteAll();
-        workspaceRepository.deleteAll();
-        userRepository.deleteAll();
         activityLogRepository.deleteAll();
         commentRepository.deleteAll();
         taskRepository.deleteAllHard();
+        projectRepository.deleteAllHard();  // bypasses @SQLRestriction
+        workspaceMemberRepository.deleteAll();
+        workspaceRepository.deleteAll();
+        userRepository.deleteAll();
 
 
         String email = uniqueEmail("project");
