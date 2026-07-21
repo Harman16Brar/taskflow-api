@@ -20,13 +20,15 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private final MailGateway mailGateway;
 
     @Value("${app.mail.from}")
     private String fromEmail;
 
-    public EmailService(JavaMailSender mailSender, SpringTemplateEngine templateEngine) {
+    public EmailService(JavaMailSender mailSender, SpringTemplateEngine templateEngine, MailGateway mailGateway) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
+        this.mailGateway = mailGateway;
     }
 
     @Async
@@ -63,8 +65,9 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(html, true);
-            mailSender.send(message);
-            log.info("Email sent to {}: {}", to, subject);
+            mailGateway.send(message, to, subject);
+            //mailSender.send(message);
+            //log.info("Email sent to {}: {}", to, subject);
         } catch (MessagingException e) {
             log.error("Failed to send email to {}: {}", to, e.getMessage());
         }

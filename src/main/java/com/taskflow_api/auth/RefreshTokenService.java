@@ -5,7 +5,6 @@ import com.taskflow_api.shared.exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ import java.util.UUID;
 @Slf4j
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final TokenBlacklistGateway tokenBlacklistGateway;
     private static final String BLACKLIST_PREFIX = "blacklist:";
 
     @Value("${app.jwt.refresh-expiration-days}")
@@ -110,16 +109,23 @@ public class RefreshTokenService {
     }
 
     private void blacklist(String tokenHash, int days) {
-        redisTemplate.opsForValue().set(
-                BLACKLIST_PREFIX + tokenHash,
-                "revoked",
-                Duration.ofDays(days)
-        );
+        tokenBlacklistGateway.blacklist(BLACKLIST_PREFIX + tokenHash, Duration.ofDays(days));
     }
 
     private boolean isBlacklisted(String tokenHash) {
-        return redisTemplate.hasKey(BLACKLIST_PREFIX + tokenHash);
+        return tokenBlacklistGateway.isBlacklisted(BLACKLIST_PREFIX + tokenHash);
     }
+//    private void blacklist(String tokenHash, int days) {
+//        redisTemplate.opsForValue().set(
+//                BLACKLIST_PREFIX + tokenHash,
+//                "revoked",
+//                Duration.ofDays(days)
+//        );
+//    }
+//
+//    private boolean isBlacklisted(String tokenHash) {
+//        return redisTemplate.hasKey(BLACKLIST_PREFIX + tokenHash);
+//    }
 }
 
 
